@@ -1,5 +1,6 @@
 """
-This module is mainly for the Product class, which will be instantiated and consumed form here.
+This module is mainly for the Product class, which will be instantiated and consumed from here.
+Also inheriting the Product class, the classes NonStockedProduct and LimitedProduct.
 """
 
 class Product:
@@ -16,7 +17,7 @@ class Product:
             self.price = price
         else:
             raise ValueError("Product Price cannot be negative")
-        if quantity > 0:
+        if quantity >= 0:
             self.quantity = quantity
         else:
             raise ValueError("Product Quantity cannot be negative")
@@ -82,8 +83,64 @@ class Product:
         :return total: total price of the purchase
         """
         total = 0.0
-        if quantity < 0:
-            raise ValueError("Product Quantity cannot be negative")
+        if quantity <= 0:
+            raise ValueError("Product Quantity cannot be lower than 1")
+        if quantity <= self.get_quantity():
+            total += quantity * self.price
+            self.set_quantity((self.get_quantity() - quantity))
+        else:
+            raise ValueError("Error while making order! Quantity larger than what exists")
+
+        return total
+
+class NonStockedProduct(Product):
+    """
+    NonStockProduct is a class that will serve to count the total amount of products, as well as
+    to enable instantiating Objects as different sellable NonStockGoods (i.e. Microsoft-licenses et.)
+    """
+    def __init__(self, name: str, price: float | int):
+        super().__init__(name=name, price=price, quantity=0)
+
+    def show(self) -> None:
+        print(f"{self.name}, Price: {self.price}")
+
+    def buy(self, quantity: int) -> float:
+        """
+         Buy a quantity of a Product Object.
+         Raises an error if buying quantity is negative.
+        :param quantity: The buying quantity, i.e. amount to be bought.
+        :return total: total price of the purchase:
+        """
+        total = 0.0
+        if quantity <= 0:
+            raise ValueError("Product Quantity cannot be lower than 1")
+
+        total += quantity * self.price
+
+        return total
+
+class LimitedProduct(Product):
+    """
+    LimitedProduct is a class that will serve to count the total amount of products, as well as
+    to enable instantiating Objects as different sellable LimitedProducts (i.e. Order Fess, etc.)
+    """
+    def __init__(self, name: str, price: float | int, quantity: int, maximum: int):
+        super().__init__(name=name, price=price, quantity=quantity)
+        self.maximum = maximum
+
+    def show(self) -> None:
+        print(f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}")
+
+    def buy(self, quantity: int) -> float:
+        """
+        Buy a quantity of a Product Object.
+        Raises an error if quantity is negative, or quantity is greater than self.quantity.
+        :param quantity: The amount to be bought
+        :return total: total price of the purchase
+        """
+        total = 0.0
+        if 0 >= quantity or quantity > self.maximum:
+            raise ValueError(f"Product Quantity must be between 1 and {self.maximum}")
         if quantity <= self.get_quantity():
             total += quantity * self.price
             self.set_quantity((self.get_quantity() - quantity))
