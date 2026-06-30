@@ -2,6 +2,8 @@
 This module is mainly for the Product class, which will be instantiated and consumed from here.
 Also inheriting the Product class, the classes NonStockedProduct and LimitedProduct.
 """
+from promotions import Promotion
+
 
 class Product:
     """
@@ -22,6 +24,7 @@ class Product:
         else:
             raise ValueError("Product Quantity cannot be negative")
         self.active = True
+        self.promotion = None
 
     def get_quantity(self) -> int:
         """
@@ -45,6 +48,23 @@ class Product:
         self.quantity = quantity
         if self.get_quantity() == 0:
             self.deactivate()
+
+    def set_promotion(self, promotion: Promotion) -> None:
+        """
+        Sets the promotion of the Product Object.
+        :param promotion: Promotion object
+        """
+        if isinstance(promotion, Promotion):
+            self.promotion = promotion
+        else:
+            raise TypeError("Promotion must be a Promotion object")
+
+    def get_promotion(self):
+        """
+        Returns the promotion Object used inside the Product Object.
+        :return self.promotion: Promotion object:
+        """
+        return self.promotion
 
     def is_active(self) -> bool:
         """
@@ -73,7 +93,7 @@ class Product:
         ("MacBook Air M2, Price: 1450, Quantity: 100")
         :return None:
         """
-        print(f"{self.name}, Price: {self.price}, Quantity: {self.quantity}")
+        print(f"{self.name}, Price: {self.price}, Quantity: {self.quantity}{": "+self.promotion.name if self.promotion is not None else ''}")
 
     def buy(self, quantity: int) -> float:
         """
@@ -86,7 +106,11 @@ class Product:
         if quantity <= 0:
             raise ValueError("Product Quantity cannot be lower than 1")
         if quantity <= self.get_quantity():
-            total += quantity * self.price
+            applicable_promotion = self.get_promotion()
+            if applicable_promotion is not None:
+                total += applicable_promotion.apply_promotion(self, quantity)
+            else:
+                total += quantity * self.price
             self.set_quantity((self.get_quantity() - quantity))
         else:
             raise ValueError("Error while making order! Quantity larger than what exists")
@@ -102,7 +126,7 @@ class NonStockedProduct(Product):
         super().__init__(name=name, price=price, quantity=0)
 
     def show(self) -> None:
-        print(f"{self.name}, Price: {self.price}")
+        print(f"{self.name}, Price: {self.price}{": "+self.promotion.name if self.promotion is not None else ''}")
 
     def buy(self, quantity: int) -> float:
         """
@@ -114,8 +138,11 @@ class NonStockedProduct(Product):
         total = 0.0
         if quantity <= 0:
             raise ValueError("Product Quantity cannot be lower than 1")
-
-        total += quantity * self.price
+        applicable_promotion = self.get_promotion()
+        if applicable_promotion is not None:
+            total += applicable_promotion.apply_promotion(self, quantity)
+        else:
+            total += quantity * self.price
 
         return total
 
@@ -129,7 +156,7 @@ class LimitedProduct(Product):
         self.maximum = maximum
 
     def show(self) -> None:
-        print(f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}")
+        print(f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Maximum: {self.maximum}{": "+self.promotion.name if self.promotion is not None else ''}")
 
     def buy(self, quantity: int) -> float:
         """
@@ -139,12 +166,6 @@ class LimitedProduct(Product):
         :return total: total price of the purchase
         """
         total = 0.0
-        if 0 >= quantity or quantity > self.maximum:
+        if quantity > self.maximum:
             raise ValueError(f"Product Quantity must be between 1 and {self.maximum}")
-        if quantity <= self.get_quantity():
-            total += quantity * self.price
-            self.set_quantity((self.get_quantity() - quantity))
-        else:
-            raise ValueError("Error while making order! Quantity larger than what exists")
-
-        return total
+        super().buy(quantity)
