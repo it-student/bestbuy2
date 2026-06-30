@@ -14,6 +14,18 @@ class Store:
     def __init__(self, products: list[Product]):
         self.product_list = products
 
+    def __contains__(self, product: Product) -> bool:
+        return product in self.product_list
+
+    def __add__(self, other: Store):
+        new_store = Store([])
+        for product in self.product_list:
+            new_store.add_product(product)
+        for product in other.product_list:
+            new_store.add_product(product)
+        return new_store
+
+
     def add_product(self, product: Product) -> None:
         """
         Add a product to the store if it is not already inside product_list.
@@ -28,8 +40,7 @@ class Store:
             else:
                 for existing_product in self.product_list:
                     if existing_product.name == product.name:
-                        existing_product.set_quantity(
-                            existing_product.get_quantity() + product.get_quantity())
+                        existing_product.quantity = existing_product.quantity + product.quantity
         else:
             raise ValueError(f"'{product.name}' is not of Type Product")
 
@@ -55,7 +66,7 @@ class Store:
         """
         total_quantity = 0
         for product in self.product_list:
-            total_quantity += product.get_quantity()
+            total_quantity += product.quantity
         return total_quantity
 
     def get_all_products(self) -> list[Product]:
@@ -65,7 +76,7 @@ class Store:
         """
         all_products = []
         for product in self.product_list:
-            if product.is_active():
+            if product.active:
                 all_products.append(product)
         return all_products
 

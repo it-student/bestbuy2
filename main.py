@@ -21,9 +21,9 @@ third_one_free = ThirdOneFree("Third One Free!")
 thirty_percent = PercentDiscount("30% off!", percent=30)
 
 # Add promotions to products
-product_list[0].set_promotion(second_half_price)
-product_list[1].set_promotion(third_one_free)
-product_list[3].set_promotion(thirty_percent)
+product_list[0].promotion = second_half_price
+product_list[1].promotion = third_one_free
+product_list[3].promotion = thirty_percent
 
 best_buy = Store(product_list)
 
@@ -81,8 +81,7 @@ def list_all_products(store: Store) -> None:
     list_of_all_products = store.get_all_products()
     print("------")
     for i, product in enumerate(list_of_all_products, start=1):
-        print(f"{i}. ", end="")
-        product.show()
+        print(f"{i}. ", product)
     print("------")
 
 def show_total_quantity(store: Store) -> None:
@@ -127,7 +126,10 @@ def start(store: Store) -> None:
     while True:
         print(menu)
         choice = input("Please choose a number: ")
-        available_actions[choice](store)
+        if choice in available_actions.keys():
+            available_actions[choice](store)
+        else:
+            print("Please enter a valid number! try again ...")
 
 if __name__ == '__main__':
     start(best_buy)
