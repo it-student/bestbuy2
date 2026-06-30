@@ -5,7 +5,7 @@ In here everything else needed will be imported and consumed.
 import sys
 from store import Store
 from products import Product, NonStockedProduct, LimitedProduct
-from promotions import Promotion, SecondHalfPrice, ThirdOneFree, PercentDiscount
+from promotions import SecondHalfPrice, ThirdOneFree, PercentDiscount
 
 # setup initial stock of inventory
 product_list = [ Product("MacBook Air M2", price=1450, quantity=100),
@@ -126,7 +126,7 @@ def start(store: Store) -> None:
     while True:
         print(menu)
         choice = input("Please choose a number: ")
-        if choice in available_actions.keys():
+        if choice in available_actions:
             available_actions[choice](store)
         else:
             print("Please enter a valid number! try again ...")

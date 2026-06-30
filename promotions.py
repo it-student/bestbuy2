@@ -10,6 +10,17 @@ class Promotion(ABC):
     """
     Abstract base class to make Promotion class easier to use.
     """
+    def __init__(self, name: str):
+        self._name = name
+
+    @property
+    def name(self) -> str:
+        """
+        Class own protected _name property.
+        :return self._name: Class own protected _name property.:
+        """
+        return self._name
+
     @abstractmethod
     def apply_promotion(self, product, quantity: int) -> float:
         """
@@ -18,15 +29,12 @@ class Promotion(ABC):
         :param quantity: int amount of product to be promoted.
         :return total: The float total promotion cost amount.:
         """
-        pass
 
 class SecondHalfPrice(Promotion):
     """
     Inheriting from abstract class Promotion.
     creating promotions, where every second product gets 50% off.
     """
-    def __init__(self, name: str):
-        self.name = name
 
     def apply_promotion(self, product, quantity: int) -> float:
         """
@@ -53,8 +61,6 @@ class ThirdOneFree(Promotion):
     Inheriting from abstract class Promotion.
     Creating promotions, where every third product gets 100% off.
     """
-    def __init__(self, name: str):
-        self.name = name
 
     def apply_promotion(self, product, quantity: int) -> float:
         """
@@ -78,7 +84,7 @@ class PercentDiscount(Promotion):
     Creating percentage promotion for every product gets n% off.
     """
     def __init__(self, name: str, percent: int):
-        self.name = name
+        super().__init__(name)
         self.percent = percent
 
     def apply_promotion(self, product, quantity: int) -> float:
@@ -92,6 +98,7 @@ class PercentDiscount(Promotion):
         total = 0
         # get total order amount cost of given Product
         total += quantity * product.price
-        # apply promotion of instantiated percent promotion (i.e. subtract it from the total order amount cost
+        # apply promotion of instantiated percent promotion
+        # (i.e. subtract it from the total order amount cost
         total -= total * (self.percent / 100)
         return total

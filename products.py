@@ -26,14 +26,18 @@ class Product:
         self._active = True
         self._promotion = None
 
-    def __lt__(self, other: Product):
-        return self._price < other._price
+    def __lt__(self, other):
+        return self.price < other.price
 
-    def __gt__(self, other: Product):
-        return self._price > other._price
+    def __gt__(self, other):
+        return self.price > other.price
 
     @property
     def price(self) -> float:
+        """
+        Returns the classes own _price of the Product Object
+        :return self._price: Price of the Product Object:
+        """
         return self._price
 
     @price.setter
@@ -126,7 +130,8 @@ class Product:
         ("MacBook Air M2, Price: 1450, Quantity: 100")
         :return None:
         """
-        return f"{self._name}, Price: {self._price}, Quantity: {self._quantity}{": "+self._promotion.name if self._promotion is not None else ''}"
+        return f"{self._name}, Price: {self._price}, Quantity: {self._quantity}\
+{": "+self._promotion.name if self._promotion is not None else ''}"
 
     def buy(self, quantity: int) -> float:
         """
@@ -152,14 +157,15 @@ class Product:
 
 class NonStockedProduct(Product):
     """
-    NonStockProduct is a class that will serve to count the total amount of products, as well as
-    to enable instantiating Objects as different sellable NonStockGoods (i.e. Microsoft-licenses et.)
+    NonStockProduct is a class that will serve to count the total amount of products, as well as to
+    enable instantiating Objects as different sellable NonStockGoods (i.e. Microsoft-licenses et.)
     """
     def __init__(self, name: str, price: float | int):
         super().__init__(name=name, price=price, quantity=0)
 
     def __str__(self) -> str:
-        return f"{self._name}, Price: {self._price}{": "+self.promotion.name if self.promotion is not None else ''}"
+        return f"{self._name}, Price: {self._price}\
+{": "+self.promotion.name if self.promotion is not None else ''}"
 
     def buy(self, quantity: int) -> float:
         """
@@ -189,7 +195,8 @@ class LimitedProduct(Product):
         self.maximum = maximum
 
     def __str__(self) -> str:
-        return f"{self._name}, Price: {self._price}, Quantity: {self.quantity}, Maximum: {self.maximum}{": "+self.promotion.name if self.promotion is not None else ''}"
+        return f"{self._name}, Price: {self._price}, Quantity: {self.quantity}, \
+Maximum: {self.maximum}{": "+self.promotion.name if self.promotion is not None else ''}"
 
     def buy(self, quantity: int) -> float:
         """

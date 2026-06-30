@@ -17,7 +17,7 @@ class Store:
     def __contains__(self, product: Product) -> bool:
         return product in self.product_list
 
-    def __add__(self, other: Store):
+    def __add__(self, other):
         new_store = Store([])
         for product in self.product_list:
             new_store.add_product(product)
@@ -55,7 +55,7 @@ class Store:
             if product in self.product_list:
                 self.product_list.remove(product)
             else:
-                raise Exception(f"'{product.name}' does not exist!")
+                print(f"'{product.name}' does not exist!")
         else:
             raise ValueError(f"'{product.name}' is not of Type Product")
 
@@ -84,7 +84,7 @@ class Store:
         """
         Buys the products inside the shopping list and
         returns the total price of the order.
-        :param shopping_list: A list of tuples containing Product (Product class) and quantity (int).
+        :param shopping_list: A list of tuples containing Product (Product) and quantity (int).
         :return total_price: Float representing the total price of the order
         """
         total_price = 0.0
